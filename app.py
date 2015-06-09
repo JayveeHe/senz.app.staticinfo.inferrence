@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 
 
-@app.route('/static_info_data', methods=['GET'])
+@app.route('/static_info/data', methods=['GET'])
 def get_static_info_python():
     if request.method == 'GET':
         # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
@@ -41,7 +41,7 @@ def get_static_info_python():
     return 'You Request Method is Not Correct!'
 
 
-@app.route('/static_info_predict', methods=['GET'])
+@app.route('/static_info/predict', methods=['GET'])
 def get_static_info_by_applist():
     if request.method == 'GET':
         # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
@@ -58,5 +58,5 @@ def get_static_info_by_applist():
 
 
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
     app.run(port=8080)
