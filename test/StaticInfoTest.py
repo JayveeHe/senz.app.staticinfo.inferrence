@@ -2,7 +2,9 @@ import unittest
 from analyzer.StaticInfoPredictor import staticinfo_predict
 
 __author__ = 'Jayvee'
-
+'''
+Not yet ready
+'''
 
 class MyStaticInfoTest(unittest.TestCase):
     # init unittest

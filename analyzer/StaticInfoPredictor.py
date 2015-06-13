@@ -17,7 +17,6 @@ def get_applist_local():
         fin = open('%s/data/appdict.json' % file_path, 'r')
         jsonstr = fin.read()
         jsonobj = json.loads(jsonstr)
-        # for obj in jsonobj:
         return jsonobj
     except IOError:
         logger.info('ioerror!')
@@ -25,7 +24,6 @@ def get_applist_local():
 
 def get_applist_remote(label=None):
     appdict = AppDict()
-    # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
     return LeancloudUtils.get_remote_data(appdict, 'AppDict', 2000, label)
 
 
@@ -115,11 +113,8 @@ def cal_cos_dist(vec1=[()], vec2=[()]):
     return sim
 
 
+"""
 if __name__ == '__main__':
-    # labeldict = build_label_dict(False)
-    # print labeldict.keys()
-    # appsdict = build_app_dict(False)
-    # print appsdict.keys()
     print staticinfo_predict(
         ["com.kplus.car", "cn.buding.martin", 'com.ubercab.driver', 'com.aibang.abbus.bus', 'com.didapinche.booking',
          'cn.edaijia.android.client', 'com.bkl.activity',
@@ -152,3 +147,4 @@ if __name__ == '__main__':
         ["cn.buding.martin", "com.mygolbs.mybus", "com.sdu.didi.psnger", "com.edcsc.wbus", "cn.chinabus.main",
          'cn.com.sina.finance'],
         is_local=True, is_degreed=False)
+"""
