@@ -1,6 +1,5 @@
 # -*- encoding:utf-8 -*-
 import logging
-from string import strip
 from analyzer.StaticInfoPredictor import staticinfo_predict
 from analyzer import AppDict
 from leancloud_utils.LeancloudUtils import LeancloudUtils
