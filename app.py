@@ -48,10 +48,11 @@ def get_static_info_by_applist():
         except ValueError, err_msg:
             logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
         apps = req_data.get('app_list')
+
         if not apps:
             return '{"error":"param error:no app_list"}'
-        applist = apps.split(',')
-        return json.dumps(staticinfo_predict(applist, True, True))
+        # applist = apps.split(',')
+        return json.dumps(staticinfo_predict(apps, True, True))
     return 'You Request Method is Not Correct!'
 
 
