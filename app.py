@@ -13,10 +13,13 @@ import json
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
+#写一下 mock server test
+#flask methods自己会判断 request method
+#改一下 README哈~
 
 @app.route('/static_info/data', methods=['GET'])
 def get_static_info_python():
-    if request.method == 'GET':
+    #if request.method == 'GET':
         appdict = AppDict.AppDict()
         try:
             if 'limit' in request.args:
@@ -34,7 +37,7 @@ def get_static_info_python():
             label = None
         result_list = LeancloudUtils.get_remote_data(appdict, 'AppDict', limit_num, label)
         return json.dumps(result_list)
-    return 'You Request Method is Not Correct!'
+    #return 'You Request Method is Not Correct!'
 
 
 @app.route('/static_info/predict', methods=['POST'])
