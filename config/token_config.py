@@ -16,5 +16,5 @@ LEANCLOUD_APP_MASTER_KEY = token_config['LEANCLOUD_APP_MASTER_KEY']
 # init shell
 sh_output = open('%s/avoscloud_setup.sh' % filedir, 'w')
 shell_str = 'avoscloud add senz.analyzer.user.staticinfo.degree.dev %s\navoscloud deploy' % LEANCLOUD_APP_ID
-print shell_str
+# print shell_str
 sh_output.write(shell_str)
