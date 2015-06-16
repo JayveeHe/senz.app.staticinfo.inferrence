@@ -3,5 +3,4 @@ export LC_APP_KEY="dt098b0zj9cicmqx69al26iqly9s335ruextuna67xc1sziy"
 export LC_APP_MASTER_KEY="ouwryvpl41vwpaolwr81tz82uz9xdj3iqql2lh4a2g7dqeqe"
 
 avoscloud add senz.analyzer.user.staticinfo.degree.dev $LC_APP_ID
-avoscloud status
-ouwryvpl41vwpaolwr81tz82uz9xdj3iqql2lh4a2g7dqeqe
+avoscloud status ouwryvpl41vwpaolwr81tz82uz9xdj3iqql2lh4a2g7dqeqe
