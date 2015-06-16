@@ -7,12 +7,12 @@ import leancloud
 
 from app import app
 from cloud import engine
+from config import token_config
 
+# APP_ID = os.environ.get('LC_APP_ID', 'pelj09whtpy6ipcob33o4zw4jl6850et2be2f1g331lcn7vr')  # your app id
+# MASTER_KEY = os.environ.get('LC_APP_MASTER_KEY', '')  # your app master key
 
-APP_ID = os.environ.get('LC_APP_ID', '0uryxpdiayra2ww3bm026u141ze227b03xg56v48p45nw8kn')  # your app id
-MASTER_KEY = os.environ.get('LC_APP_MASTER_KEY', '')  # your app master key
-
-leancloud.init(APP_ID, master_key=MASTER_KEY)
+leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
 
 application = engine
 

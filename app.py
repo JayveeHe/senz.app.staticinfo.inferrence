@@ -1,10 +1,12 @@
 # -*- encoding:utf-8 -*-
+import logging
 import os
 import sys
 from analyzer.StaticInfoPredictor import staticinfo_predict
 from analyzer import AppDict
+from config import token_config
 from package_leancloud_utils.leancloud_utils import LeancloudUtils
-
+import logentries
 
 __author__ = 'Jayvee'
 
@@ -14,11 +16,17 @@ import json
 project_path = os.path.dirname(__file__)
 sys.path.append(project_path)
 # TODO setup logentries
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-# f_h = logging.FileHandler('%s/log/staticinfo_degree.log' % project_path)
-# logger.addHandler(f_h)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logentries.LogentriesHandler(token_config.LOGENTRIES_TOKEN))
 app = Flask(__name__)
+
+
+@app.before_first_request
+def initService():
+    print token_config.APP_ENV
+    logger.info('test')
+    # pass
 
 
 @app.route('/static_info/data', methods=['GET', 'POST'])
@@ -37,7 +45,7 @@ def get_applist_data():
                 label = None
         except KeyError:
             # TODO setup logentries
-            # logger.info('keyerror')
+            logger.info('keyerror')
             limit_num = 100  # default:limit_num=100
             label = None
         result_list = LeancloudUtils.get_remote_data(appdict, 'AppDict', limit_num, label)

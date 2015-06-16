@@ -5,12 +5,12 @@ import math
 import leancloud
 
 from analyzer import AppDict
-from package_leancloud_utils import settings
+from config import token_config
 
 
 __author__ = 'Jayvee'
 
-leancloud.init(settings.APP_ID, settings.APP_KEY)
+leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
 
 
 class LeancloudUtils():

@@ -41,9 +41,9 @@ def push_data_to_leancloud(fin_path):
     :return: None
     """
 
-    from package_leancloud_utils import settings
+    from config import token_config
 
-    leancloud.init(settings.APP_ID, settings.APP_KEY)
+    leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
     fin = open(fin_path, 'r')
     jsonobj = json.loads(fin.read())
     for single_app in jsonobj:
@@ -56,5 +56,4 @@ def push_data_to_leancloud(fin_path):
 
 
 if __name__ == '__main__':
-    # push data to leancloud when it's first time running
     push_data_to_leancloud(r'D:\CS\Git\Jobs\senz.analyzer.applist\analyzer\data\appdict.json')
