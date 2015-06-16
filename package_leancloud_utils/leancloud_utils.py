@@ -4,8 +4,8 @@ import math
 
 import leancloud
 
-from leancloud_utils import settings
 from analyzer import AppDict
+from package_leancloud_utils import settings
 
 
 __author__ = 'Jayvee'
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
     appdict = AppDict.AppDict()
     appdict_result = LeancloudUtils.get_remote_data(appdict, 'AppDict', 2000)
-    # test output
+    # tests output
     import sys
     import json
 

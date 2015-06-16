@@ -3,7 +3,7 @@ import logging
 import os
 import math
 from analyzer.AppDict import AppDict
-from leancloud_utils.LeancloudUtils import LeancloudUtils
+from package_leancloud_utils.leancloud_utils import LeancloudUtils
 
 __author__ = 'Jayvee'
 

@@ -1,5 +1,5 @@
 import unittest
-from leancloud_utils import LeancloudUtils as PackageLeancloudUtils
+from package_leancloud_utils import leancloud_utils as plu
 
 __author__ = 'Jayvee'
 
@@ -14,9 +14,9 @@ class MyLeancloudTest(unittest.TestCase):
         pass
 
     def test_get_remote_data(self):
-        app_dict = PackageLeancloudUtils.AppDict.AppDict()
+        app_dict = plu.AppDict.AppDict()
         # case 1
-        result = PackageLeancloudUtils.LeancloudUtils.get_remote_data(app_dict, 'AppDict', 0)
+        result = plu.LeancloudUtils.get_remote_data(app_dict, 'AppDict', 0)
         self.assertEqual(result, [])
 
         # case 2
@@ -30,5 +30,5 @@ class MyLeancloudTest(unittest.TestCase):
                            {"app": "com.autohome.mycar", "degree": 0.9, "label": "has_car"},
                            {"app": "cn.buding.martin", "degree": 0.8, "label": "has_car"},
                            {"app": "com.uu.uueeye", "degree": 0.8, "label": "has_car"}]
-        result = PackageLeancloudUtils.LeancloudUtils.get_remote_data(app_dict, 'AppDict', 10)
+        result = plu.LeancloudUtils.get_remote_data(app_dict, 'AppDict', 10)
         self.assertEqual(result, expected_result)

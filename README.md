@@ -1,58 +1,57 @@
-# Python-getting-started
+FORMAT: 1A
+HOST:http://dev.jayveehe_staticinfo.avosapps.com/
 
-一个简单的使用 Flask 的 Python 应用。
-可以运行在 LeanEngine Python 运行时环境。
+# Senz.analyzer.user.staticinfo.degree
 
-## 本地运行
+User's static info predictor,degree included.
+You can view the code at Github [Senz.analyzer.user.staticinfo.degree](https://github.com/petchat/senz.analyzer.user.staticinfo.degree)
 
-首先确认本机已经安装 [Python](http://python.org/)2.7 运行环境。然后执行下列指令：
+## Group API
 
-```
-$ git clone git@github.com:leancloud/python-getting-started.git
-$ cd python-getting-started
-```
+## static info data [/static_info/data{?limit}{?label}]
+The result of static_info/data has 3 attributes:
 
-准备启动文件:
++ app - Name of the app, String.
++ degree - Weight of the label, Float.
++ label - Label of the app, String.
++ Parameters
 
-```
-$ cp start.sh.example start.sh
-$ chmod +x start.sh
-```
+    + limit: 100 (optional,number) - Limit number of the result.
+    + label: gender (optional,string) - Expected Label of the result.
+    
+### Get remote appslist data [GET]
 
-将 app id 等信息更新到 `start.sh` 文件中：
++ Response 200 (application/json)
+        
+            [
+                {
+                    "app": "app_name_1",
+                    "degree": app_degree_1,
+                    "label": "pp_label_1"
+                },
+                {
+                    "app": "app_name_n",
+                    "degree": app_degree_n,
+                    "label": "app_label_n"
+                }
+            ]
+            
 
-```
-export LC_APP_ID=<your app id>
-export LC_APP_KEY=<your app key>
-export LC_APP_MASTER_KEY=<your master key>
-```
 
-启动项目：
+## static info predict [/static_info/predict]
+The result of static info predict has following attributes:
 
-```
-$ ./start.sh
-```
++ {label} - The key shows a label, and the value is the probability of this label.
 
-应用即可启动运行：[localhost:3000](http://localhost:3000)
+### Predict the labels by user's app_list. [POST]
++ Request (application/json)
 
-## 部署到 LeanEngine
+        {
+            "app_list": ["com.yidian.nba","com.dota.emu"]
+        }
 
-首先确认本机已经安装 [LeanCloud 命令行工具](https://leancloud.cn/docs/cloud_code_commandline.html)。
++ Response 200 (application/json)
 
-部署到测试环境：
-```
-$ avoscloud deploy
-```
-
-部署到生产环境：
-```
-$ avoscloud publish
-```
-
-## 相关文档
-
-* [LeanEngine 指南](https://leancloud.cn/docs/leanengine_guide.html)
-* [Python SDK 指南](https://leancloud.cn/docs/python_guide.html)
-* [Python SDK API](https://leancloud.cn/docs/api/python/index.html)
-* [命令行工具详解](https://leancloud.cn/docs/cloud_code_commandline.html)
-* [LeanEngine FAQ](https://leancloud.cn/docs/cloud_code_faq.html)
+        {
+            "gender": 0.193666930476603
+        }
