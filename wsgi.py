@@ -9,7 +9,7 @@ from app import app
 from cloud import engine
 
 
-APP_ID = os.environ.get('LC_APP_ID', 'vihmt0t5gk5p6x6hqdc8h8hybgyldlj8rkwh0kz177pxngyi')  # your app id
+APP_ID = os.environ.get('LC_APP_ID', '0uryxpdiayra2ww3bm026u141ze227b03xg56v48p45nw8kn')  # your app id
 MASTER_KEY = os.environ.get('LC_APP_MASTER_KEY', '')  # your app master key
 
 leancloud.init(APP_ID, master_key=MASTER_KEY)
