@@ -7,10 +7,12 @@ __author__ = 'Jayvee'
 
 class TestFlaskApp(unittest.TestCase):
     def setUp(self):
+        super(TestFlaskApp, self).setUp()
         app.config['TESTING'] = True
         self.app = app.test_client()
 
     def tearDown(self):
+        super(TestFlaskApp, self).tearDown()
         app.config['TESTING'] = False
 
     def test_get_applist_data(self):
