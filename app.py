@@ -25,7 +25,7 @@ app = Flask(__name__)
 @app.before_first_request
 def initService():
     print token_config.APP_ENV
-    logger.info('test')
+    # logger.info('test')
     # pass
 
 
