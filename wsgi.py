@@ -19,5 +19,5 @@ application = engine
 if __name__ == '__main__':
     # 只在本地开发环境执行的代码
     app.debug = True
-    server = simple_server.make_server('localhost', 8080, application)
+    server = simple_server.make_server('localhost', token_config.APP_PORT, application)
     server.serve_forever()

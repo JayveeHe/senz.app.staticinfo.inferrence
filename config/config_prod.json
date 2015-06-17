@@ -3,5 +3,6 @@
   "LEANCLOUD_APP_KEY": "p187uar3tfo83fp76yf93a59s3werp0o6plnrmczbvcfgx80",
   "LEANCLOUD_APP_MASTER_KEY": "2t9uzscrnpt2ls23jj0c8vwba3sys0rxyjfu5np5qxi5v7y2",
   "LOGENTRIES_TOKEN":"e9eca592-f001-4801-a6e0-670ee8e3ed60",
-  "APP_ENV": "prod"
+  "APP_ENV": "prod",
+  "APP_PORT":9527
 }
