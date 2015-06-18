@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST:http://dev.jayveehe_staticinfo.avosapps.com/
+HOST:http://staticinfo.avosapps.com/
 
 # Senz.analyzer.user.staticinfo.degree
 
