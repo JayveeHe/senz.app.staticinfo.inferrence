@@ -6,3 +6,4 @@ export LC_APP_PORT=9528
 avoscloud add senz.analyzer.user.staticinfo.degree pelj09whtpy6ipcob33o4zw4jl6850et2be2f1g331lcn7vr
 avoscloud checkout senz.analyzer.user.staticinfo.degree
 mv ./config/.avoscloud_keys.prod ~/.avoscloud_keys
+cp ./config/config_prod.json ./config/config.json
