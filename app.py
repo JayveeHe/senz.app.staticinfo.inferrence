@@ -32,6 +32,8 @@ def initService():
 @app.route('/static_info/data', methods=['GET', 'POST'])
 def get_applist_data():
     if request.method == 'GET':
+        logger.info('[%s][get_applist_data]receive get request from %s, param data=%s' % (
+            token_config.LOG_TAG, request.remote_addr, request.args.keys()))
         appdict = AppDict.AppDict()
         try:
             if 'limit' in request.args:
@@ -60,18 +62,19 @@ def predict_static_info():
     # params JSON validate
     req_data = {}
     try:
+        logger.info('[%s][predict_static_info]receive post request from %s, param data=%s' % (
+            token_config.LOG_TAG, request.remote_addr, request.data))
         req_data = json.loads(request.data)
     except ValueError, err_msg:
         # TODO setup logentries
-        logger.info('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
+        logger.debug('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
         pass
     apps = req_data.get('app_list')
 
     if not apps:
-        logger.info('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
         return '{"error":"param error:no app_list"}'
-    # applist = apps.split(',')
     return json.dumps(staticinfo_predict(apps, True, True))
 
 
