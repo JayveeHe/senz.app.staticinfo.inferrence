@@ -25,7 +25,7 @@ app = Flask(__name__)
 @app.before_first_request
 def initService():
     print token_config.APP_ENV
-    # logger.info('test')
+    logger.info('[%s]Service start' % token_config.LOG_TAG)
     # pass
 
 
@@ -45,7 +45,7 @@ def get_applist_data():
                 label = None
         except KeyError:
             # TODO setup logentries
-            logger.info('keyerror')
+            logger.debug('[%s][get_applist_data]keyerror' % token_config.LOG_TAG)
             limit_num = 100  # default:limit_num=100
             label = None
         result_list = LeancloudUtils.get_remote_data(appdict, 'AppDict', limit_num, label)
@@ -63,11 +63,13 @@ def predict_static_info():
         req_data = json.loads(request.data)
     except ValueError, err_msg:
         # TODO setup logentries
+        logger.info('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
         pass
     apps = req_data.get('app_list')
 
     if not apps:
+        logger.info('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
         return '{"error":"param error:no app_list"}'
     # applist = apps.split(',')
     return json.dumps(staticinfo_predict(apps, True, True))
