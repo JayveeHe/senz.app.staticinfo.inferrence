@@ -1,33 +1,41 @@
 import json
-import logging
 import os
 import math
-from analyzer.AppDict import AppDict
+from analyzer.DataObject import AppDict
 from package_leancloud_utils.leancloud_utils import LeancloudUtils
 
 __author__ = 'Jayvee'
 
 file_path = os.path.dirname(os.path.abspath(__file__))
 # print file_path
-logger = logging.getLogger(__name__)
 
 
 def get_applist_local():
+    """
+    get applist by local json file
+    """
     try:
         fin = open('%s/data/appdict.json' % file_path, 'r')
         jsonstr = fin.read()
         jsonobj = json.loads(jsonstr)
         return jsonobj
     except IOError:
-        logger.info('ioerror!')
+        # logger.info('ioerror!')
+        print 'get_applist_local ioerror!'
 
 
 def get_applist_remote(label=None):
+    """
+    get applist by leancloud storage
+    """
     appdict = AppDict()
     return LeancloudUtils.get_remote_data(appdict, 'AppDict', 2000, label)
 
 
 def build_app_dict(is_local=True):
+    """
+    build app dict(appname as key, labels of this app as values)
+    """
     try:
         if is_local:
             jsonobj = get_applist_local()
@@ -41,10 +49,14 @@ def build_app_dict(is_local=True):
                 app_dict[obj['app']] = {obj['label']: obj['degree']}
         return app_dict
     except IOError:
-        logger.info('ioerror!')
+        # logger.info('ioerror!')
+        print 'build_app_dict ioerror!'
 
 
 def build_label_dict(is_local=True, label=None):
+    """
+    build label dict(label as key, applist that has the label as values)
+    """
     try:
         if is_local:
             jsonobj = get_applist_local()
@@ -58,10 +70,14 @@ def build_label_dict(is_local=True, label=None):
                 label_dict[obj['label']] = {obj['app']: obj['degree']}
         return label_dict
     except IOError:
-        logger.info('ioerror!')
+        # logger.info('ioerror!')
+        print 'build_label_dict ioerror!'
 
 
 def staticinfo_predict(user_applist, is_local=False, is_degreed=True):
+    """
+    predict a user's potential interest labels by applist
+    """
     apps_dict = build_app_dict(is_local)
     labels_dict = build_label_dict(is_local)
     labels = []
@@ -99,8 +115,12 @@ def staticinfo_predict(user_applist, is_local=False, is_degreed=True):
 
 
 def cal_cos_dist(vec1=[()], vec2=[()]):
+    """
+    calculate cosine distance
+    """
     if len(vec1) != len(vec2) or not (isinstance(vec1, list) and isinstance(vec2, list)):
-        logger.info('inputs are not list with same length!')
+        # logger.info('inputs are not list with same length!')
+        print 'cal_cos_dist inputs are not list with same lenght!'
         return None
     numerator = 0
     denominator1 = 0
