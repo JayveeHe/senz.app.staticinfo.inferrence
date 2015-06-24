@@ -4,7 +4,7 @@ import math
 
 import leancloud
 
-from analyzer import AppDict
+from analyzer import DataObject
 from config import token_config
 
 
@@ -18,7 +18,7 @@ class LeancloudUtils():
         # app_dict = AppDict.AppDict()# 提前定义
         pass
 
-    app_dict = AppDict.AppDict()  # 提前定义
+    app_dict = DataObject.AppDict()  # 提前定义
 
     @staticmethod
     def get_remote_data(objclass, tablename, max_num, label=None):
@@ -63,7 +63,7 @@ class LeancloudUtils():
 # 测试demo
 if __name__ == '__main__':
     # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
-    appdict = AppDict.AppDict()
+    appdict = DataObject.AppDict()
     appdict_result = LeancloudUtils.get_remote_data(appdict, 'AppDict', 2000)
     # tests output
     import sys

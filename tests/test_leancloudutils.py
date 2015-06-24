@@ -14,7 +14,7 @@ class MyLeancloudTest(unittest.TestCase):
         pass
 
     def test_get_remote_data(self):
-        app_dict = plu.AppDict.AppDict()
+        app_dict = plu.DataObject.AppDict()
         # case 1
         result = plu.LeancloudUtils.get_remote_data(app_dict, 'AppDict', 0)
         self.assertEqual(result, [])
