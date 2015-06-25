@@ -88,8 +88,8 @@ def push_data_to_feedback(feedback_data):
         labels = feedback_data['labels']
         applist = feedback_data['applist']
         fd = FeedbackData()
-        if not isinstance(labels, list):
-            raise MsgException('labels should be a list!')
+        if not isinstance(labels, dict):
+            raise MsgException('labels should be a dict!')
         if not isinstance(applist, list):
             raise MsgException('applist should be a list!')
         if len(labels) == 0:
