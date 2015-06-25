@@ -83,7 +83,7 @@ class TestFlaskApp(unittest.TestCase):
 
     def test_push_feedback_data(self):
         rv = self.app.post('/static_info/data',
-                           data='{"labels":["has_car","study"],"applist":["test1","test2","serser"]}')
+                           data='{"labels":{"has_car":1,"study":0},"applist":["test1","test2","serser"]}')
         self.assertEqual(200, rv.status_code)
         strjson = rv.data
         result = json.loads(strjson)
@@ -106,20 +106,20 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual('failed', result['status'])
-        self.assertEqual('labels should be a list!', result['msg'])
+        self.assertEqual('labels should be a dict!', result['msg'])
         # test invalid type of applist
-        rv = self.app.post('/static_info/data', data='{"labels":["has_car","study"],"applist":"123se"}')
+        rv = self.app.post('/static_info/data', data='{"labels":{"has_car":1,"study":0},"applist":"123se"}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual('failed', result['status'])
         self.assertEqual('applist should be a list!', result['msg'])
         # test empty labels
-        rv = self.app.post('/static_info/data', data='{"labels":[],"applist":["asdfad","adseew"]}')
+        rv = self.app.post('/static_info/data', data='{"labels":{},"applist":["asdfad","adseew"]}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual('failed', result['status'])
         # test empty applist
-        rv = self.app.post('/static_info/data', data='{"labels":["study"],"applist":[]}')
+        rv = self.app.post('/static_info/data', data='{"labels":{"study":-1},"applist":[]}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual('failed', result['status'])
