@@ -80,3 +80,46 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual('gender', result.keys()[0])
         # !!!! this value maybe changed when new data is pushed to the database!!!
         self.assertEqual(0.193666930476603, result['gender'])
+
+    def test_push_feedback_data(self):
+        rv = self.app.post('/static_info/data',
+                           data='{"labels":["has_car","study"],"applist":["test1","test2","serser"]}')
+        self.assertEqual(200, rv.status_code)
+        strjson = rv.data
+        result = json.loads(strjson)
+        self.assertEqual('success', result['status'])
+
+    def test_push_feedback_invaliddata(self):
+        # test invalid data
+        rv = self.app.post('/static_info/data', data='{}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
+        self.assertEqual('request data keyerror', result['msg'])
+        # test empty data or keyerror
+        rv = self.app.post('/static_info/data', data='{}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
+        # test invalid type of labels
+        rv = self.app.post('/static_info/data', data='{"labels":123123,"applist":["asdfad","adseew"]}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
+        self.assertEqual('labels should be a list!', result['msg'])
+        # test invalid type of applist
+        rv = self.app.post('/static_info/data', data='{"labels":["has_car","study"],"applist":"123se"}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
+        self.assertEqual('applist should be a list!', result['msg'])
+        # test empty labels
+        rv = self.app.post('/static_info/data', data='{"labels":[],"applist":["asdfad","adseew"]}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
+        # test empty applist
+        rv = self.app.post('/static_info/data', data='{"labels":["study"],"applist":[]}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('failed', result['status'])
