@@ -16,13 +16,12 @@ import json
 
 project_path = os.path.dirname(__file__)
 sys.path.append(project_path)
-# TODO setup logentries
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 lh = logentries.LogentriesHandler(token_config.LOGENTRIES_TOKEN)
-format = logging.Formatter('%(asctime)s : %(levelname)s, %(message)s',
-                           '%a %b %d %H:%M:%S %Y')
-lh.setFormatter(format)
+fm = logging.Formatter('%(asctime)s : %(levelname)s, %(message)s',
+                       '%a %b %d %H:%M:%S %Y')
+lh.setFormatter(fm)
 logger.addHandler(lh)
 app = Flask(__name__)
 
@@ -34,7 +33,7 @@ def initService():
     # pass
 
 
-@app.route('/static_info/data', methods=['GET', 'POST'])
+@app.route('/data', methods=['GET', 'POST'])
 def handle_applist_data():
     # get storage applist
     if request.method == 'GET':
@@ -57,8 +56,6 @@ def handle_applist_data():
             label = None
         result_list = LeancloudUtils.get_remote_data(appdict, 'AppDict', limit_num, label)
         return json.dumps(result_list)
-    # TODO add post method
-    # TODO POST method for adding applist data
     # push data to feedback
     if request.method == 'POST':
         logger.info('[%s][handle_applist_data]receive post request from %s' % (
@@ -82,7 +79,7 @@ def handle_applist_data():
     return 'You Request Method is Not Correct!'
 
 
-@app.route('/static_info/predict', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def predict_static_info():
     # params JSON validate
     req_data = {}
@@ -91,15 +88,14 @@ def predict_static_info():
             token_config.LOG_TAG, request.remote_addr, request.data))
         req_data = json.loads(request.data)
     except ValueError, err_msg:
-        # TODO setup logentries
         logger.debug('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
         # return json.dumps("{'status':'failed','msg':'%s'}" % err_msg)
-    apps = req_data.get('app_list')
+    apps = req_data.get('applist')
 
     if not apps:
         logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
-        return '{"error":"param error:no app_list"}'
+        return '{"error":"param error:no applist"}'
     return json.dumps(staticinfo_predict(apps, True, True))
 
 
