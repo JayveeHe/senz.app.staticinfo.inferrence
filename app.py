@@ -2,7 +2,7 @@
 import logging
 import os
 import sys
-from analyzer.StaticInfoPredictor import staticinfo_predict
+from analyzer.StaticInfoPredictor import StaticInfoPredictor
 from analyzer import DataObject
 from config import token_config
 from package_leancloud_utils.leancloud_utils import LeancloudUtils
@@ -24,12 +24,14 @@ fm = logging.Formatter('%(asctime)s : %(levelname)s, %(message)s',
 lh.setFormatter(fm)
 logger.addHandler(lh)
 app = Flask(__name__)
+predictor = StaticInfoPredictor()
 
 
 @app.before_first_request
 def initService():
-    print token_config.APP_ENV
+    # print token_config.APP_ENV
     logger.info('[%s]Service start' % token_config.LOG_TAG)
+    predictor.staticinfo_predict([], is_local=False, is_degreed=True, add_binary=True)
     # pass
 
 
@@ -39,7 +41,7 @@ def handle_applist_data():
     if request.method == 'GET':
         logger.info('[%s][handle_applist_data]receive get request from %s, param data=%s' % (
             token_config.LOG_TAG, request.remote_addr, request.args.keys()))
-        appdict = DataObject.AppDict()
+        # appdict = DataObject.AppDict()
         try:
             if 'limit' in request.args:
                 dd = request.args['limit']
@@ -54,7 +56,7 @@ def handle_applist_data():
             logger.debug('[%s][handle_applist_data]keyerror' % token_config.LOG_TAG)
             limit_num = 100  # default:limit_num=100
             label = None
-        result_list = LeancloudUtils.get_remote_data(appdict, 'AppDict', limit_num, label)
+        result_list = LeancloudUtils.get_remote_data('app_dict', limit_num, label)
         return json.dumps(result_list)
     # push data to feedback
     if request.method == 'POST':
@@ -96,7 +98,7 @@ def predict_static_info():
     if not apps:
         logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
         return '{"error":"param error:no applist"}'
-    return json.dumps(staticinfo_predict(apps, True, True))
+    return json.dumps(predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True))
 
 
 if __name__ == "__main__":
