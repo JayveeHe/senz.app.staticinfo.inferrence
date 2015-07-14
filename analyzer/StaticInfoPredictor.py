@@ -76,7 +76,7 @@ class StaticInfoPredictor():
         result = []
         count = query.count()
         pages = count / 1000 + 1
-        print count
+        # print count
         for i in range(pages):
             _query = copy.deepcopy(query)
             _query.limit(1000)
