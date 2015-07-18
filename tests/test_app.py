@@ -63,15 +63,15 @@ class TestFlaskApp(unittest.TestCase):
         rv = self.app.post('/predict', data='')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('param error:no applist', result['error'])
+        self.assertEqual(u'No JSON object could be decoded', result['msg'])
         rv = self.app.post('/predict', data='dadfasdfasdf')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('param error:no applist', result['error'])
+        self.assertEqual(u'No JSON object could be decoded', result['msg'])
         rv = self.app.post('/predict', data='{}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('param error:no applist', result['error'])
+        self.assertEqual('param error:no applist', result['msg'])
 
     # def test_predict_static_info(self):
     #     rv = self.app.post('/predict', data='{"applist": ["com.yidian.nba","com.dota.emu"]}')
