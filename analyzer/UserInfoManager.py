@@ -7,6 +7,7 @@ __author__ = 'Jayvee'
 USER_INFO_DATABASE_APP_ID = "pin72fr1iaxb7sus6newp250a4pl2n5i36032ubrck4bej81"
 USER_INFO_DATABASE_APP_KEY = "qs4o5iiywp86eznvok4tmhul360jczk7y67qj0ywbcq35iia"
 
+
 def push_userinfo(userId, staticInfo, timestamp):
     leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
@@ -19,9 +20,12 @@ def push_userinfo(userId, staticInfo, timestamp):
         user_query = leancloud.Query(leancloud.User)
         # userquery.equal_to('id', userId)
         user_obj = user_query.get(userId)
+
         uil.set('user', user_obj)
         uil.set('staticInfo', staticInfo)
         uil.set('timestamp', timestamp)
+        uil.save()
+        uil.set('userRawdataId', uil.id)
         uil.save()
     except Exception, e:
         raise MyExceptions.MsgException('[%s]fail to push userId=%s, staticinfo=%s, timestamp=%s, detail=%s'
@@ -61,7 +65,8 @@ def query_userinfo_list(userId):
         for userinfo in query_result:
             userinfo_list.append(
                 {'timestamp': userinfo.attributes['timestamp'],
-                 'staticInfo': userinfo.attributes['staticInfo']})
+                 'staticInfo': userinfo.attributes['staticInfo'],
+                 'userRawdataId': userinfo.attributes['userRawdataId']})
         return userinfo_list
     except leancloud.LeanCloudError, lce:
         raise MyExceptions.MsgException('[%s]fail to query userinfo. userId=%s, detail=%s'
@@ -69,12 +74,12 @@ def query_userinfo_list(userId):
 
 
 if __name__ == '__main__':
-    # push_userinfo('55a0c4d3e4b06d11d320a160',
-    #               {"sport-fitness": 0.14017973131826397, "consumption-5000to10000": 0.12907750356282785,
-    #                "business_news": 0.06019292654288461, "consumption-5000down": 0.10113896734527256,
-    #                "current_news": 0.19523741203679054, "consumption-20000up": 0.15569978883230456,
-    #                "indoorsman": 0.17960441041762185, "health": 0.12191351265656468,
-    #                "consumption-10000to20000": 0.2356820553240806, "social": 0.20201845583545766,
-    #                "online_shopping": 0.17904598788548037}, time.time() * 1000)
+    push_userinfo('55a0c4d3e4b06d11d320a160',
+                  {"sport-fitness": 0.14017973131826397, "consumption-5000to10000": 0.12907750356282785,
+                   "business_news": 0.06019292654288461, "consumption-5000down": 0.10113896734527256,
+                   "current_news": 0.19523741203679054, "consumption-20000up": 0.15569978883230456,
+                   "indoorsman": 0.17960441041762185, "health": 0.12191351265656468,
+                   "consumption-10000to20000": 0.2356820553240806, "social": 0.20201845583545766,
+                   "online_shopping": 0.17904598788548037}, 1427642632501)
     print query_latest_userinfo('55a0c4d3e4b06d11d320a160')
     print query_userinfo_list('55a0c4d3e4b06d11d320a160')
