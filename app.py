@@ -126,7 +126,8 @@ def log_userinfo():
         userId = req_data['userId']
         timestamp = req_data['timestamp']
         staticInfo = req_data['staticInfo']
-        UserInfoManager.push_userinfo(userId, staticInfo, timestamp)
+        userRawdataId = req_data.get('userRawdataId')
+        UserInfoManager.push_userinfo(userId, staticInfo, timestamp, userRawdataId)
         return json.dumps({'code': 0, 'msg': 'user %s staticinfo logged,timestamp=%s' % (userId, timestamp)})
     except MsgException, me:
         logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
