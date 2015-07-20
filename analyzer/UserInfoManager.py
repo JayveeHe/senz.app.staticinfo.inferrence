@@ -4,10 +4,11 @@ from config import token_config
 import re
 
 __author__ = 'Jayvee'
-
+USER_INFO_DATABASE_APP_ID = "pin72fr1iaxb7sus6newp250a4pl2n5i36032ubrck4bej81"
+USER_INFO_DATABASE_APP_KEY = "qs4o5iiywp86eznvok4tmhul360jczk7y67qj0ywbcq35iia"
 
 def push_userinfo(userId, staticInfo, timestamp):
-    leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
+    leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
         if not isinstance(staticInfo, dict):
             raise MyExceptions.MsgException('staticInfo should be a dict')
@@ -28,7 +29,7 @@ def push_userinfo(userId, staticInfo, timestamp):
 
 
 def query_latest_userinfo(userId):
-    leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
+    leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
         UserInfoLog = leancloud.Object.extend('UserInfoLog')
         info_query = leancloud.Query(UserInfoLog)
@@ -47,7 +48,7 @@ def query_latest_userinfo(userId):
 
 
 def query_userinfo_list(userId):
-    leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
+    leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
         UserInfoLog = leancloud.Object.extend('UserInfoLog')
         info_query = leancloud.Query(UserInfoLog)
