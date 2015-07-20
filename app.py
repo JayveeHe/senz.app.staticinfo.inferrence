@@ -2,8 +2,11 @@
 import logging
 import os
 import sys
+import time
+import leancloud
 from analyzer.StaticInfoPredictor import StaticInfoPredictor
 from analyzer import DataObject
+from analyzer import UserInfoManager
 from config import token_config
 from package_leancloud_utils.leancloud_utils import LeancloudUtils
 import logentries
@@ -92,13 +95,47 @@ def predict_static_info():
     except ValueError, err_msg:
         logger.debug('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
-        # return json.dumps("{'status':'failed','msg':'%s'}" % err_msg)
+        return json.dumps({'status': 'failed', 'msg': str(err_msg)})
     apps = req_data.get('applist')
-
     if not apps:
         logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
-        return '{"error":"param error:no applist"}'
-    return json.dumps(predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True))
+        return json.dumps({'status': 'failed', 'msg': 'param error:no applist'})
+    sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
+    return json.dumps(sim_dict)
+
+
+@app.route('/log', methods=['POST'])
+def log_userinfo():
+    logger.info('[%s][log_userinfo]receive post request from %s, param data=%s' % (
+        token_config.LOG_TAG, request.remote_addr, request.data))
+    try:
+        req_data = json.loads(request.data)
+        userId = req_data['userId']
+        timestamp = req_data['timestamp']
+        staticInfo = req_data['staticInfo']
+        UserInfoManager.push_userinfo(userId, staticInfo, timestamp)
+        return json.dumps({'code': 0})
+    except MsgException, me:
+        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        return json.dumps({'code': 1, 'msg': me})
+
+
+@app.route('/log/<userId>', methods=['GET'])
+def get_userinfo(userId):
+    try:
+        if userId:
+            userinfo_list = UserInfoManager.query_userinfo_list(str(userId))
+            return json.dumps({'code': 0, 'userinfo_list': userinfo_list})
+        else:
+            return json.dumps({'code': 103, 'msg': 'userId required'})
+    except MsgException, me:
+        logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        return json.dumps({'code': 1, 'msg': me})
+
+
+@app.route('/status', methods=['GET'])
+def check_status():
+    return 'The staticinfo.degree is running'
 
 
 if __name__ == "__main__":
