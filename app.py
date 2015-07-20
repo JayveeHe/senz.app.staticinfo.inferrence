@@ -2,8 +2,6 @@
 import logging
 import os
 import sys
-import time
-import leancloud
 from analyzer.StaticInfoPredictor import StaticInfoPredictor
 from analyzer import DataObject
 from analyzer import UserInfoManager
@@ -27,6 +25,20 @@ fm = logging.Formatter('%(asctime)s : %(levelname)s, %(message)s',
 lh.setFormatter(fm)
 logger.addHandler(lh)
 app = Flask(__name__)
+
+# Import bugsnag
+import bugsnag
+from bugsnag.flask import handle_exceptions
+
+# Configure Bugsnag
+bugsnag.configure(
+    api_key="1ce730e59931759daf3ee562a8640a38",
+    project_root=project_path,
+)
+
+# Attach Bugsnag to Flask's exception handler
+handle_exceptions(app)
+
 predictor = StaticInfoPredictor()
 predictor.staticinfo_predict([], is_local=False, is_degreed=True, add_binary=True)
 
