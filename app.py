@@ -32,7 +32,7 @@ from bugsnag.flask import handle_exceptions
 
 # Configure Bugsnag
 bugsnag.configure(
-    api_key="1ce730e59931759daf3ee562a8640a38",
+    api_key=token_config.BUGSNAG_KEY,
     project_root=project_path,
 )
 
