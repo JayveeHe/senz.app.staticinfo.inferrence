@@ -67,7 +67,7 @@ class LeancloudUtils():
             return query.find()
         count = query.count()
         pages = count / 1000 + 1
-        print count
+        # print count
         query_count = 0
         for i in range(pages):
             _query = copy.deepcopy(query)

@@ -30,6 +30,7 @@ app = Flask(__name__)
 predictor = StaticInfoPredictor()
 predictor.staticinfo_predict([], is_local=False, is_degreed=True, add_binary=True)
 
+
 @app.before_first_request
 def initService():
     # print token_config.APP_ENV
@@ -79,8 +80,8 @@ def handle_applist_data():
         except MsgException, msg:
             logger.info('[%s][handle_applist_data]request data error, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, msg, request.data))
-            return '{"code": 1, "msg": "%s"}' % msg.message
-        return '{"status": "success"}'
+            return json.dumps({"code": 1, "msg": "%s" % msg.message})
+        return json.dumps({"code": 0, "msg": "push data to feedback success, request_data= %s" % request.data})
     return 'You Request Method is Not Correct!'
 
 
@@ -106,9 +107,9 @@ def predict_static_info():
 
 @app.route('/log', methods=['POST'])
 def log_userinfo():
-    logger.info('[%s][log_userinfo]receive post request from %s, param data=%s' % (
-        token_config.LOG_TAG, request.remote_addr, request.data))
     try:
+        logger.info('[%s][log_userinfo]receive post request from %s, param data=%s' % (
+            token_config.LOG_TAG, request.remote_addr, request.data))
         req_data = json.loads(request.data)
         userId = req_data['userId']
         timestamp = req_data['timestamp']
@@ -118,9 +119,16 @@ def log_userinfo():
     except MsgException, me:
         logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
         return json.dumps({'code': 1, 'msg': str(me)})
+    except ValueError, ve:
+        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        return json.dumps({'code': 103, 'msg': str(ve)})
+    except Exception, e:
+        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        return json.dumps({'code': 1, 'msg': str(e)})
 
 
 @app.route('/log/<userId>', methods=['GET'])
+@app.route('/log/<userId>/', methods=['GET'])
 def get_userinfo(userId):
     try:
         if userId:
@@ -130,7 +138,7 @@ def get_userinfo(userId):
             return json.dumps({'code': 103, 'msg': 'userId required'})
     except MsgException, me:
         logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
-        return json.dumps({'code': 1, 'msg': me})
+        return json.dumps({'code': 1, 'msg': str(me)})
 
 
 @app.route('/status', methods=['GET'])
