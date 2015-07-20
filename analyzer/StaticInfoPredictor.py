@@ -223,9 +223,9 @@ def cal_cos_dist(vec1=[()], vec2=[()]):
 if __name__ == '__main__':
     # sdas = LeancloudUtils.get_remote_data('app_dict',max_num=1030)
     # notbi = LeancloudUtils.get_remote_data('app_dict_not_binary')
-    notbi = get_notbinary_applist_remote()
-    print notbi[0]
-
+    # notbi = get_notbinary_applist_remote()
+    # print notbi[0]
+    pass
 """
 if __name__ == '__main__':
     print staticinfo_predict(

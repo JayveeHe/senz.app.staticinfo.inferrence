@@ -1,7 +1,7 @@
 import leancloud
-import time
 from analyzer import MyExceptions
 from config import token_config
+import re
 
 __author__ = 'Jayvee'
 
@@ -9,6 +9,10 @@ __author__ = 'Jayvee'
 def push_userinfo(userId, staticInfo, timestamp):
     leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
     try:
+        if not isinstance(staticInfo, dict):
+            raise MyExceptions.MsgException('staticInfo should be a dict')
+        if not re.compile('1\d{12}').match(str(timestamp)):
+            raise MyExceptions.MsgException('timestamp is not formatted')
         UserInfoLog = leancloud.Object.extend('UserInfoLog')
         uil = UserInfoLog()
         user_query = leancloud.Query(leancloud.User)

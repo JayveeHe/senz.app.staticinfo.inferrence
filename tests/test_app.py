@@ -87,39 +87,92 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(200, rv.status_code)
         strjson = rv.data
         result = json.loads(strjson)
-        self.assertEqual('success', result['status'])
+        self.assertEqual(0, result['code'])
 
     def test_push_feedback_invaliddata(self):
         # test invalid data
         rv = self.app.post('/data', data='{}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(103, result['code'])
         self.assertEqual('request data keyerror', result['msg'])
         # test empty data or keyerror
         rv = self.app.post('/data', data='{}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(103, result['code'])
         # test invalid type of labels
         rv = self.app.post('/data', data='{"labels":123123,"applist":["asdfad","adseew"]}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(1, result['code'])
         self.assertEqual('labels should be a dict!', result['msg'])
         # test invalid type of applist
         rv = self.app.post('/data', data='{"labels":{"has_car":1,"study":0},"applist":"123se"}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(1, result['code'])
         self.assertEqual('applist should be a list!', result['msg'])
         # test empty labels
         rv = self.app.post('/data', data='{"labels":{},"applist":["asdfad","adseew"]}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(1, result['code'])
         # test empty applist
         rv = self.app.post('/data', data='{"labels":{"study":-1},"applist":[]}')
         self.assertEqual(200, rv.status_code)
         result = json.loads(rv.data)
-        self.assertEqual('failed', result['status'])
+        self.assertEqual(1, result['code'])
+
+    def test_push_invalid_log(self):
+        rv = self.app.post('/log', data='')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual(u'No JSON object could be decoded', result['msg'])
+        rv = self.app.post('/log', data='dadfasdfasdf')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual(103, result['code'])
+        self.assertEqual(u'No JSON object could be decoded', result['msg'])
+        rv = self.app.post('/predict', data='{}')
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual('param error:no applist', result['msg'])
+        # not exist userId
+        data = {
+            "staticInfo": {
+                "sport-fitness": 0.14017973131826397,
+                "consumption-5000to10000": 0.12907750356282785
+            },
+            "userId": "558a5ee7e4b0acec6b941e97",
+            "timestamp": 14002293212
+        }
+        rv = self.app.post('/log', data=json.dumps(data))
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual(1, result['code'])
+        #invalid staticinfo type
+        data = {
+            "staticInfo": [],
+            "userId": "558a5ee7e4b0acec6b941e97",
+            "timestamp": 1437238667744
+        }
+        rv = self.app.post('/log', data=json.dumps(data))
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual(1, result['code'])
+
+    def test_push_log(self):
+        data = {
+            "staticInfo": {
+                "sport-fitness": 0.14017973131826397,
+                "consumption-5000to10000": 0.12907750356282785
+            },
+            "userId": "558a5ee7e4b0acec6b941e96",
+            "timestamp": 1437238667744
+        }
+        rv = self.app.post('/log', data=json.dumps(data))
+        self.assertEqual(200, rv.status_code)
+        result = json.loads(rv.data)
+        self.assertEqual(0, result['code'])
+
