@@ -14,6 +14,10 @@ LEANCLOUD_APP_ID = token_config['LEANCLOUD_APP_ID']
 LEANCLOUD_APP_KEY = token_config['LEANCLOUD_APP_KEY']
 LEANCLOUD_APP_MASTER_KEY = token_config['LEANCLOUD_APP_MASTER_KEY']
 APP_PORT = token_config['APP_PORT']
+
+# BUGSNAG
+BUGSNAG_KEY = token_config['BUGSNAG_KEY']
+
 # init shell
 # sh_output = open('%s/avoscloud_setup.sh' % filedir, 'w')
 # shell_str = 'avoscloud add senz.analyzer.user.staticinfo.degree.dev %s\navoscloud deploy' % LEANCLOUD_APP_ID
