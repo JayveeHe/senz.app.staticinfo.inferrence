@@ -28,9 +28,10 @@ class LeancloudUtils():
         :param max_num: max count of the result
         :return: list of result.
         """
-        REMOTE_DB_APP_ID = '3plka1gwb9mlayuguyh792dqajtpsa05nu77om9v8twr86ly'
-        REMOTE_DB_APP_KEY = 'a843jsdl0r49fqta11nl4ypm4l77shqk8vqag5bvfytzfsrd'
-        leancloud.init(REMOTE_DB_APP_ID, REMOTE_DB_APP_KEY)
+        # REMOTE_DB_APP_ID = '3plka1gwb9mlayuguyh792dqajtpsa05nu77om9v8twr86ly'
+        # REMOTE_DB_APP_KEY = 'a843jsdl0r49fqta11nl4ypm4l77shqk8vqag5bvfytzfsrd'
+        # leancloud.init(REMOTE_DB_APP_ID, REMOTE_DB_APP_KEY)
+        leancloud.init(token_config.LEANCLOUD_APP_ID, token_config.LEANCLOUD_APP_KEY)
         objclass = leancloud.Object.extend(tablename)
         query = leancloud.Query(objclass)
         # max_page_num = int(math.ceil(max_num / 1000.0))
