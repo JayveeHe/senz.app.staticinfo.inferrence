@@ -69,7 +69,7 @@ def handle_applist_data():
             else:
                 label = None
         except KeyError:
-            logger.debug('[%s][handle_applist_data]keyerror' % token_config.LOG_TAG)
+            logger.error('[%s][handle_applist_data]keyerror' % token_config.LOG_TAG)
             limit_num = 100  # default:limit_num=100
             label = None
         result_list = LeancloudUtils.get_remote_data('app_dict', limit_num, label)
@@ -82,17 +82,17 @@ def handle_applist_data():
             jsonobj = json.loads(request.data)
             DataObject.push_data_to_feedback(jsonobj)
         except ValueError, ve:
-            logger.info('[%s][handle_applist_data]request data value error, details=%s, request_data=%s' % (
+            logger.error('[%s][handle_applist_data]request data value error, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, ve, request.data))
             resp = make_response('{"code": 103, "msg": "request data value error"}', 400)
             return resp
         except KeyError, ke:
-            logger.info('[%s][handle_applist_data]request data keyerror, details=%s, request_data=%s' % (
+            logger.error('[%s][handle_applist_data]request data keyerror, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, ke, request.data))
             resp = make_response('{"code": 103, "msg": "request data keyerror"}', 400)
             return resp
         except MsgException, msg:
-            logger.info('[%s][handle_applist_data]request data error, details=%s, request_data=%s' % (
+            logger.error('[%s][handle_applist_data]request data error, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, msg, request.data))
             resp = make_response(json.dumps({"code": 1, "msg": "%s" % msg.message}), 400)
             return resp
@@ -109,13 +109,13 @@ def predict_static_info():
             token_config.LOG_TAG, request.remote_addr, request.data))
         req_data = json.loads(request.data)
     except ValueError, err_msg:
-        logger.debug('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
+        logger.error('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
         resp = make_response(json.dumps({'code': 103, 'msg': str(err_msg)}), 400)
         return resp
     apps = req_data.get('applist')
     if not apps:
-        logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.error('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
         resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
         return resp
     sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
@@ -136,22 +136,22 @@ def log_userinfo():
         UserInfoManager.push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId)
         return json.dumps({'code': 0, 'msg': 'user %s staticinfo logged,timestamp=%s' % (userId, timestamp)})
     except MsgException, me:
-        logger.debug(
+        logger.error(
             '[%s][log_userinfo]POST log Error! detail = %s\n params=%s' % (token_config.LOG_TAG, me, request.data))
         resp = make_response(json.dumps({'code': 1, 'msg': str(me)}), 400)
         return resp
     except ValueError, ve:
-        logger.debug(
+        logger.error(
             '[%s][log_userinfo]POST log ValueError! detail = %s\n params=%s' % (token_config.LOG_TAG, ve, request.data))
         resp = make_response(json.dumps({'code': 103, 'msg': str(ve)}), 400)
         return resp
     except KeyError, ke:
-        logger.debug('[%s][log_userinfo]POST log KeyError key=%s params=%s'
+        logger.error('[%s][log_userinfo]POST log KeyError key=%s params=%s'
                      % (token_config.LOG_TAG, ke, request.data))
         resp = make_response(json.dumps({'code': 103, 'msg': 'KeyError,Key=%s' % ke}), 400)
         return resp
     except Exception, e:
-        logger.debug('[%s][log_userinfo]POST log Unknown Error!detail = %s\n params=%s' % (
+        logger.error('[%s][log_userinfo]POST log Unknown Error!detail = %s\n params=%s' % (
             token_config.LOG_TAG, e, request.data))
         resp = make_response(json.dumps({'code': 1, 'msg': str(e)}), 400)
         return resp
@@ -167,10 +167,10 @@ def get_userinfo(userId):
         else:
             return json.dumps({'code': 103, 'msg': 'userId required'})
     except MsgException, me:
-        logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.error('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
         return json.dumps({'code': 1, 'msg': str(me)})
     except Exception, e:
-        logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.error('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
         return json.dumps({'code': 1, 'msg': e.message})
 
 
