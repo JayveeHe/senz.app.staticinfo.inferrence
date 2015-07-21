@@ -125,18 +125,26 @@ def log_userinfo():
         req_data = json.loads(request.data)
         userId = req_data['userId']
         timestamp = req_data['timestamp']
-        staticInfo = req_data['staticInfo']
-        userRawdataId = req_data.get('userRawdataId')
-        UserInfoManager.push_userinfo(userId, staticInfo, timestamp, userRawdataId)
+        applist = req_data['applist']
+        userRawdataId = req_data['userRawdataId']
+        staticInfo = predictor.staticinfo_predict(applist, add_binary=True)
+        UserInfoManager.push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId)
         return json.dumps({'code': 0, 'msg': 'user %s staticinfo logged,timestamp=%s' % (userId, timestamp)})
     except MsgException, me:
-        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.debug(
+            '[%s][log_userinfo]POST log Error! detail = %s\n params=%s' % (token_config.LOG_TAG, me, request.data))
         return json.dumps({'code': 1, 'msg': str(me)})
     except ValueError, ve:
-        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.debug(
+            '[%s][log_userinfo]POST log ValueError! detail = %s\n params=%s' % (token_config.LOG_TAG, ve, request.data))
         return json.dumps({'code': 103, 'msg': str(ve)})
+    except KeyError, ke:
+        logger.debug('[%s][log_userinfo]POST log KeyError key=%s params=%s'
+                     % (token_config.LOG_TAG, ke, request.data))
+        return json.dumps({'code': 103, 'msg': 'KeyError,Key=%s' % ke})
     except Exception, e:
-        logger.debug('[%s][log_userinfo]POST log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        logger.debug('[%s][log_userinfo]POST log Unknown Error!detail = %s\n params=%s' % (
+            token_config.LOG_TAG, e, request.data))
         return json.dumps({'code': 1, 'msg': str(e)})
 
 
@@ -152,6 +160,9 @@ def get_userinfo(userId):
     except MsgException, me:
         logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
         return json.dumps({'code': 1, 'msg': str(me)})
+    except Exception, e:
+        logger.debug('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
+        return json.dumps({'code': 1, 'msg': e.message})
 
 
 @app.route('/status', methods=['GET'])

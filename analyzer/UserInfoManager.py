@@ -8,7 +8,7 @@ USER_INFO_DATABASE_APP_ID = "pin72fr1iaxb7sus6newp250a4pl2n5i36032ubrck4bej81"
 USER_INFO_DATABASE_APP_KEY = "qs4o5iiywp86eznvok4tmhul360jczk7y67qj0ywbcq35iia"
 
 
-def push_userinfo(userId, staticInfo, timestamp, userRawdataId):
+def push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId):
     leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
         if not isinstance(staticInfo, dict):
@@ -22,6 +22,7 @@ def push_userinfo(userId, staticInfo, timestamp, userRawdataId):
         user_obj = user_query.get(userId)
 
         uil.set('user', user_obj)
+        uil.set('applist', applist)
         uil.set('staticInfo', staticInfo)
         uil.set('timestamp', timestamp)
         uil.set('userRawdataId', userRawdataId)
@@ -65,10 +66,11 @@ def query_userinfo_list(userId):
             userinfo_list.append(
                 {'timestamp': userinfo.attributes['timestamp'],
                  'staticInfo': userinfo.attributes['staticInfo'],
-                 'userRawdataId': userinfo.attributes.get('userRawdataId')})
+                 'userRawdataId': userinfo.attributes['userRawdataId'],
+                 'applist': userinfo.attributes['applist']})
         return userinfo_list
     except leancloud.LeanCloudError, lce:
-        raise MyExceptions.MsgException('[%s]fail to query userinfo. userId=%s, detail=%s'
+        raise MyExceptions.MsgException('[%s]fail to query userinfo. userId=%s, LeanCloudError detail=%s'
                                         % ('query_userinfo_list', userId, lce))
 
 
