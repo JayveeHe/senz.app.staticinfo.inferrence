@@ -124,55 +124,55 @@ class TestFlaskApp(unittest.TestCase):
         result = json.loads(rv.data)
         self.assertEqual(1, result['code'])
 
-    def test_push_invalid_log(self):
-        rv = self.app.post('/log', data='')
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual(u'No JSON object could be decoded', result['msg'])
-        rv = self.app.post('/log', data='dadfasdfasdf')
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual(103, result['code'])
-        self.assertEqual(u'No JSON object could be decoded', result['msg'])
-        rv = self.app.post('/predict', data='{}')
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual('param error:no applist', result['msg'])
-        # not exist userId
-        data = {
-            "staticInfo": {
-                "sport-fitness": 0.14017973131826397,
-                "consumption-5000to10000": 0.12907750356282785
-            },
-            "userId": "558a5ee7e4b0acec6b941e97",
-            "timestamp": 14002293212
-        }
-        rv = self.app.post('/log', data=json.dumps(data))
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual(1, result['code'])
-        #invalid staticinfo type
-        data = {
-            "staticInfo": [],
-            "userId": "558a5ee7e4b0acec6b941e97",
-            "timestamp": 1437238667744
-        }
-        rv = self.app.post('/log', data=json.dumps(data))
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual(1, result['code'])
-
-    def test_push_log(self):
-        data = {
-            "staticInfo": {
-                "sport-fitness": 0.14017973131826397,
-                "consumption-5000to10000": 0.12907750356282785
-            },
-            "userId": "558a5ee7e4b0acec6b941e96",
-            "timestamp": 1437238667744
-        }
-        rv = self.app.post('/log', data=json.dumps(data))
-        self.assertEqual(200, rv.status_code)
-        result = json.loads(rv.data)
-        self.assertEqual(0, result['code'])
-
+        # def test_push_invalid_log(self):
+        #     rv = self.app.post('/log', data='')
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual(u'No JSON object could be decoded', result['msg'])
+        #     rv = self.app.post('/log', data='dadfasdfasdf')
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual(103, result['code'])
+        #     self.assertEqual(u'No JSON object could be decoded', result['msg'])
+        #     rv = self.app.post('/predict', data='{}')
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual('param error:no applist', result['msg'])
+        #     # not exist userId
+        #     data = {
+        #         "staticInfo": {
+        #             "sport-fitness": 0.14017973131826397,
+        #             "consumption-5000to10000": 0.12907750356282785
+        #         },
+        #         "userId": "558a5ee7e4b0acec6b941e97",
+        #         "timestamp": 14002293212
+        #     }
+        #     rv = self.app.post('/log', data=json.dumps(data))
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual(103, result['code'])
+        #     #invalid staticinfo type
+        #     data = {
+        #         "staticInfo": [],
+        #         "userId": "558a5ee7e4b0acec6b941e97",
+        #         "timestamp": 1437238667744
+        #     }
+        #     rv = self.app.post('/log', data=json.dumps(data))
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual(1, result['code'])
+        #
+        # def test_push_log(self):
+        #     data = {
+        #         "staticInfo": {
+        #             "sport-fitness": 0.14017973131826397,
+        #             "consumption-5000to10000": 0.12907750356282785
+        #         },
+        #         "userId": "558a5ee7e4b0acec6b941e96",
+        #         "timestamp": 1437238667744
+        #     }
+        #     rv = self.app.post('/log', data=json.dumps(data))
+        #     self.assertEqual(200, rv.status_code)
+        #     result = json.loads(rv.data)
+        #     self.assertEqual(0, result['code'])
+        #
