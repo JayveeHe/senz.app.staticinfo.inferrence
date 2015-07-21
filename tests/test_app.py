@@ -81,13 +81,14 @@ class TestFlaskApp(unittest.TestCase):
     #     # !!!! this value maybe changed when new data is pushed to the database!!!
     #     self.assertEqual(0.193666930476603, result['gender'])
 
-    def test_push_feedback_data(self):
-        rv = self.app.post('/data',
-                           data='{"labels":{"has_car":1,"study":0},"applist":["test1","test2","serser"]}')
-        self.assertEqual(200, rv.status_code)
-        strjson = rv.data
-        result = json.loads(strjson)
-        self.assertEqual(0, result['code'])
+    # def test_push_feedback_data(self):
+    # TODO avoid push data to prod database
+    #     rv = self.app.post('/data',
+    #                        data='{"labels":{"has_car":1,"study":0},"applist":["test1","test2","serser"]}')
+    #     self.assertEqual(200, rv.status_code)
+    #     strjson = rv.data
+    #     result = json.loads(strjson)
+    #     self.assertEqual(0, result['code'])
 
     def test_push_feedback_invaliddata(self):
         # test invalid data
