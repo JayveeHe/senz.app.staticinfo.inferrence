@@ -12,7 +12,7 @@ from analyzer.MyExceptions import MsgException
 
 __author__ = 'Jayvee'
 
-from flask import Flask, request
+from flask import Flask, request, make_response
 import json
 
 project_path = os.path.dirname(__file__)
@@ -84,15 +84,18 @@ def handle_applist_data():
         except ValueError, ve:
             logger.info('[%s][handle_applist_data]request data value error, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, ve, request.data))
-            return '{"code": 103, "msg": "request data value error"}'
+            resp = make_response('{"code": 103, "msg": "request data value error"}', 400)
+            return resp
         except KeyError, ke:
             logger.info('[%s][handle_applist_data]request data keyerror, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, ke, request.data))
-            return '{"code": 103, "msg": "request data keyerror"}'
+            resp = make_response('{"code": 103, "msg": "request data keyerror"}', 400)
+            return resp
         except MsgException, msg:
             logger.info('[%s][handle_applist_data]request data error, details=%s, request_data=%s' % (
                 token_config.LOG_TAG, msg, request.data))
-            return json.dumps({"code": 1, "msg": "%s" % msg.message})
+            resp = make_response(json.dumps({"code": 1, "msg": "%s" % msg.message}), 400)
+            return resp
         return json.dumps({"code": 0, "msg": "push data to feedback success, request_data= %s" % request.data})
     return 'You Request Method is Not Correct!'
 
@@ -108,11 +111,13 @@ def predict_static_info():
     except ValueError, err_msg:
         logger.debug('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
         # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
-        return json.dumps({'code': 103, 'msg': str(err_msg)})
+        resp = make_response(json.dumps({'code': 103, 'msg': str(err_msg)}), 400)
+        return resp
     apps = req_data.get('applist')
     if not apps:
         logger.debug('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
-        return json.dumps({'code': 1, 'msg': 'param error:no applist'})
+        resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
+        return resp
     sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
     return json.dumps(sim_dict)
 
@@ -133,19 +138,23 @@ def log_userinfo():
     except MsgException, me:
         logger.debug(
             '[%s][log_userinfo]POST log Error! detail = %s\n params=%s' % (token_config.LOG_TAG, me, request.data))
-        return json.dumps({'code': 1, 'msg': str(me)})
+        resp = make_response(json.dumps({'code': 1, 'msg': str(me)}), 400)
+        return resp
     except ValueError, ve:
         logger.debug(
             '[%s][log_userinfo]POST log ValueError! detail = %s\n params=%s' % (token_config.LOG_TAG, ve, request.data))
-        return json.dumps({'code': 103, 'msg': str(ve)})
+        resp = make_response(json.dumps({'code': 103, 'msg': str(ve)}), 400)
+        return resp
     except KeyError, ke:
         logger.debug('[%s][log_userinfo]POST log KeyError key=%s params=%s'
                      % (token_config.LOG_TAG, ke, request.data))
-        return json.dumps({'code': 103, 'msg': 'KeyError,Key=%s' % ke})
+        resp = make_response(json.dumps({'code': 103, 'msg': 'KeyError,Key=%s' % ke}), 400)
+        return resp
     except Exception, e:
         logger.debug('[%s][log_userinfo]POST log Unknown Error!detail = %s\n params=%s' % (
             token_config.LOG_TAG, e, request.data))
-        return json.dumps({'code': 1, 'msg': str(e)})
+        resp = make_response(json.dumps({'code': 1, 'msg': str(e)}), 400)
+        return resp
 
 
 @app.route('/log/<userId>', methods=['GET'])
