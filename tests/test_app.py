@@ -61,15 +61,15 @@ class TestFlaskApp(unittest.TestCase):
 
     def test_predict_static_info_invalidparams(self):
         rv = self.app.post('/predict', data='')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(u'No JSON object could be decoded', result['msg'])
         rv = self.app.post('/predict', data='dadfasdfasdf')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(u'No JSON object could be decoded', result['msg'])
         rv = self.app.post('/predict', data='{}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual('param error:no applist', result['msg'])
 
@@ -81,46 +81,47 @@ class TestFlaskApp(unittest.TestCase):
     #     # !!!! this value maybe changed when new data is pushed to the database!!!
     #     self.assertEqual(0.193666930476603, result['gender'])
 
-    def test_push_feedback_data(self):
-        rv = self.app.post('/data',
-                           data='{"labels":{"has_car":1,"study":0},"applist":["test1","test2","serser"]}')
-        self.assertEqual(200, rv.status_code)
-        strjson = rv.data
-        result = json.loads(strjson)
-        self.assertEqual(0, result['code'])
+    # def test_push_feedback_data(self):
+    # TODO avoid push data to prod database
+    #     rv = self.app.post('/data',
+    #                        data='{"labels":{"has_car":1,"study":0},"applist":["test1","test2","serser"]}')
+    #     self.assertEqual(200, rv.status_code)
+    #     strjson = rv.data
+    #     result = json.loads(strjson)
+    #     self.assertEqual(0, result['code'])
 
     def test_push_feedback_invaliddata(self):
         # test invalid data
         rv = self.app.post('/data', data='{}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(103, result['code'])
         self.assertEqual('request data keyerror', result['msg'])
         # test empty data or keyerror
         rv = self.app.post('/data', data='{}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(103, result['code'])
         # test invalid type of labels
         rv = self.app.post('/data', data='{"labels":123123,"applist":["asdfad","adseew"]}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(1, result['code'])
         self.assertEqual('labels should be a dict!', result['msg'])
         # test invalid type of applist
         rv = self.app.post('/data', data='{"labels":{"has_car":1,"study":0},"applist":"123se"}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(1, result['code'])
         self.assertEqual('applist should be a list!', result['msg'])
         # test empty labels
         rv = self.app.post('/data', data='{"labels":{},"applist":["asdfad","adseew"]}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(1, result['code'])
         # test empty applist
         rv = self.app.post('/data', data='{"labels":{"study":-1},"applist":[]}')
-        self.assertEqual(200, rv.status_code)
+        self.assertEqual(400, rv.status_code)
         result = json.loads(rv.data)
         self.assertEqual(1, result['code'])
 
