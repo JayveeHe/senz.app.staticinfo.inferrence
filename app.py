@@ -103,7 +103,7 @@ def handle_applist_data():
 @app.route('/predict', methods=['POST'])
 def predict_static_info():
     # params JSON validate
-    req_data = {}
+    # req_data = {}
     try:
         logger.info('[%s][predict_static_info]receive post request from %s, param data=%s' % (
             token_config.LOG_TAG, request.remote_addr, request.data))
@@ -119,6 +119,19 @@ def predict_static_info():
         resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
         return resp
     sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
+    # transform the prob
+    for key in sim_dict.keys():
+        if '-' in key:
+            levels = key.split('-')
+            first_level = levels[0]
+            second_level = levels[1]
+            if first_level in sim_dict.keys():
+                sim_dict[first_level][second_level] = sim_dict[key]
+            else:
+                sim_dict[first_level] = {second_level: sim_dict[key]}
+            del sim_dict[key]
+    logger.info('[%s][predict_static_info]%s\'s request success, sim dic =%s' % (
+        token_config.LOG_TAG, request.remote_addr, json.dumps(sim_dict)))
     return json.dumps(sim_dict)
 
 
