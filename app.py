@@ -120,6 +120,40 @@ def predict_static_info():
         return resp
     sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
     # transform the prob
+    # for key in sim_dict.keys():
+    #     if '-' in key:
+    #         levels = key.split('-')
+    #         first_level = levels[0]
+    #         second_level = levels[1]
+    #         if first_level in sim_dict.keys():
+    #             sim_dict[first_level][second_level] = sim_dict[key]
+    #         else:
+    #             sim_dict[first_level] = {second_level: sim_dict[key]}
+    #         del sim_dict[key]
+    logger.info('[%s][predict_static_info]%s\'s request success, sim dic =%s' % (
+        token_config.LOG_TAG, request.remote_addr, json.dumps(sim_dict)))
+    return json.dumps(sim_dict)
+
+@app.route('/predict_level', methods=['POST'])
+def predict_static_info_level():
+    # params JSON validate
+    # req_data = {}
+    try:
+        logger.info('[%s][predict_static_info]receive post request from %s, param data=%s' % (
+            token_config.LOG_TAG, request.remote_addr, request.data))
+        req_data = json.loads(request.data)
+    except ValueError, err_msg:
+        logger.error('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
+        # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
+        resp = make_response(json.dumps({'code': 103, 'msg': str(err_msg)}), 400)
+        return resp
+    apps = req_data.get('applist')
+    if not apps:
+        logger.error('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
+        resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
+        return resp
+    sim_dict = predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_binary=True)
+    # transform the prob
     for key in sim_dict.keys():
         if '-' in key:
             levels = key.split('-')
