@@ -1,5 +1,5 @@
 import unittest
-from analyzer.StaticInfoPredictor import StaticInfoPredictor
+from analyzer.staticInfo_predictor import StaticInfoPredictor
 
 __author__ = 'Jayvee'
 '''

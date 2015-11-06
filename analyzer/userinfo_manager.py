@@ -1,5 +1,5 @@
 import leancloud
-from analyzer import MyExceptions
+from analyzer import staticinfo_exceptions
 from config import token_config
 import re
 
@@ -12,9 +12,9 @@ def push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId):
     leancloud.init(USER_INFO_DATABASE_APP_ID, USER_INFO_DATABASE_APP_KEY)
     try:
         if not isinstance(staticInfo, dict):
-            raise MyExceptions.MsgException('staticInfo should be a dict')
+            raise staticinfo_exceptions.MsgException('staticInfo should be a dict')
         if not re.compile('1\d{12}').match(str(timestamp)):
-            raise MyExceptions.MsgException('timestamp is not formatted')
+            raise staticinfo_exceptions.MsgException('timestamp is not formatted')
         UserInfoLog = leancloud.Object.extend('UserInfoLog')
         uil = UserInfoLog()
         user_query = leancloud.Query(leancloud.User)
@@ -28,7 +28,7 @@ def push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId):
         uil.set('userRawdataId', userRawdataId)
         uil.save()
     except Exception, e:
-        raise MyExceptions.MsgException('[%s]fail to push userId=%s, staticinfo=%s, timestamp=%s, detail=%s'
+        raise staticinfo_exceptions.MsgException('[%s]fail to push userId=%s, staticinfo=%s, timestamp=%s, detail=%s'
                                         % ('push_userinfo', userId, staticInfo, timestamp, str(e)))
 
 
@@ -47,7 +47,7 @@ def query_latest_userinfo(userId):
         if lce.code == 101:
             return None
         else:
-            raise MyExceptions.MsgException('[%s]fail to query latest info. userId=%s, detail=%s'
+            raise staticinfo_exceptions.MsgException('[%s]fail to query latest info. userId=%s, detail=%s'
                                             % ('query_latest_userinfo', userId, lce))
 
 
@@ -70,7 +70,7 @@ def query_userinfo_list(userId):
                  'applist': userinfo.attributes['applist']})
         return userinfo_list
     except leancloud.LeanCloudError, lce:
-        raise MyExceptions.MsgException('[%s]fail to query userinfo. userId=%s, LeanCloudError detail=%s'
+        raise staticinfo_exceptions.MsgException('[%s]fail to query userinfo. userId=%s, LeanCloudError detail=%s'
                                         % ('query_userinfo_list', userId, lce))
 
 

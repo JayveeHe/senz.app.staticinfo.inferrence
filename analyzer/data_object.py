@@ -1,6 +1,6 @@
 import json
 import leancloud
-from analyzer.MyExceptions import MsgException
+from analyzer.staticinfo_exceptions import MsgException
 
 __author__ = 'Jayvee'
 

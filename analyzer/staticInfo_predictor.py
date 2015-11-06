@@ -8,14 +8,17 @@ from package_leancloud_utils.leancloud_utils import LeancloudUtils
 __author__ = 'Jayvee'
 
 file_path = os.path.dirname(os.path.abspath(__file__))
+
+
 # print file_path
 
 
 class StaticInfoPredictor():
-    def __init__(self):
+    def __init__(self, platform):
         self.inst_applist = []
         self.inst_app_dict = {}
         self.inst_label_dict = {}
+        self.platform = platform
 
     @staticmethod
     def get_applist_local():
@@ -32,7 +35,7 @@ class StaticInfoPredictor():
             print 'get_applist_local ioerror!'
 
     @staticmethod
-    def get_applist_remote(label=None):
+    def get_applist_remote(app_dict_name='app_dict', label=None):
         """
         get applist by leancloud storage
         """
@@ -46,16 +49,16 @@ class StaticInfoPredictor():
         # applist_result = []
         # for item in appdict:
         #     applist_result.append(item.attributes)
-        applist_result = LeancloudUtils.get_remote_data('app_dict')
+        applist_result = LeancloudUtils.get_remote_data(app_dict_name)
         return applist_result
 
     @staticmethod
-    def get_notbinary_applist_remote():
+    def get_notbinary_applist_remote(not_binary_app_dict_name='app_dict_not_binary'):
         """
         get not binary applist by leancloud storage
         :return:
         """
-        notbi_applist_result = LeancloudUtils.get_remote_data('app_dict_not_binary')
+        notbi_applist_result = LeancloudUtils.get_remote_data(not_binary_app_dict_name)
         # process not binary degree
         result = []
         for item in notbi_applist_result:
@@ -151,16 +154,19 @@ class StaticInfoPredictor():
             # logger.debug('build_label_apps_dict ioerror!')
             print 'build_label_apps_dict ioerror!'
 
-    def staticinfo_predict(self, user_applist, is_local=False, is_degreed=True, add_binary=False):
+    def staticinfo_predict(self, user_applist, is_local=False, is_degreed=True, add_nonbinary=False):
         """
         predict a user's potential interest labels by applist
+
+        :param add_nonbinary:
+            whether to count for the non-binary applist
         """
         if len(self.inst_applist) == 0:
             if is_local:
                 self.inst_applist = StaticInfoPredictor.get_applist_local()
             else:
                 self.inst_applist = StaticInfoPredictor.get_applist_remote()
-                if add_binary:
+                if add_nonbinary:
                     self.inst_applist.extend(StaticInfoPredictor.get_notbinary_applist_remote())
             dicts = StaticInfoPredictor.build_label_apps_dict(self.inst_applist)
             self.inst_app_dict = dicts[0]
@@ -192,6 +198,62 @@ class StaticInfoPredictor():
                     weight = 1
                 else:
                     weight = 1
+                model_vec.append((weight, degree))
+                if model_app_key in user_applist:
+                    user_vec.append((weight, degree))
+                else:
+                    user_vec.append((0, 0))
+            sim_dict[label] = cal_cos_dist(user_vec, model_vec)
+        return sim_dict
+
+    def staticinfo_predict_platform(self, user_applist, add_nonbinary):
+        """
+        predict staticinfo, Android and iOS availablea
+        :param user_applist: user's applist
+        :param platform: android or ios
+        :param add_nonbinary: whether to add non-binary app dict
+        :return:
+        """
+        remote_dict_name = {'Android': ['app_dict', 'app_dict_not_binary'],
+                            'iOS': ['ios_app_dict', 'ios_app_dict_not_binary']}
+        if len(self.inst_applist) == 0:
+            self.inst_applist = StaticInfoPredictor.get_applist_remote(
+                remote_dict_name[self.platform][0])
+            if add_nonbinary:
+                self.inst_applist.extend(
+                    StaticInfoPredictor.get_notbinary_applist_remote(
+                        remote_dict_name[self.platform][1]))
+            dicts = StaticInfoPredictor. \
+                build_label_apps_dict(self.inst_applist)
+            self.inst_app_dict = dicts[0]
+            self.inst_label_dict = dicts[1]
+        apps_dict = self.inst_app_dict
+        labels_dict = self.inst_label_dict
+        labels = []
+        vecinfo = {}
+        # get user's labels and appvec
+        for user_app in user_applist:
+            if user_app in apps_dict:
+                for label in apps_dict[user_app].keys():
+                    if label not in labels:
+                        labels.append(label)
+                        vecinfo[label] = {user_app: apps_dict[user_app][label]}
+                    else:
+                        vecinfo[label][user_app] = apps_dict[user_app][label]
+        # build user's vec
+        sim_dict = {}
+        for label in labels:
+            user_vec = []
+            model_vec = []
+            for model_app_key in labels_dict[label].keys():
+                # if is_degreed:
+                degree = labels_dict[label][model_app_key]
+                # else:
+                #     degree = 1
+                # if degree > 0:
+                #     weight = 1
+                # else:
+                weight = 1
                 model_vec.append((weight, degree))
                 if model_app_key in user_applist:
                     user_vec.append((weight, degree))

@@ -5,7 +5,7 @@ import math
 
 import leancloud
 
-from analyzer import DataObject
+from analyzer import data_object
 from config import token_config
 
 __author__ = 'Jayvee'
@@ -18,7 +18,7 @@ class LeancloudUtils():
         # app_dict = AppDict.AppDict()# 提前定义
         pass
 
-    app_dict = DataObject.AppDict()  # 提前定义
+    app_dict = data_object.AppDict()  # 提前定义
 
     @staticmethod
     def get_remote_data(tablename, max_num=None, label=None):
@@ -53,11 +53,14 @@ class LeancloudUtils():
         if label:
             query.equal_to('label', label)
         if max_num is not None:
-            query.limit(max_num if max_num<1000 else 1000)
-        query_list = LeancloudUtils._find(query, max_num)
+            query.limit(max_num if max_num < 1000 else 1000)
         result_list = []
-        for item in query_list:
-            result_list.append(item.attributes)
+        try:
+            query_list = LeancloudUtils._find(query, max_num)
+            for item in query_list:
+                result_list.append(item.attributes)
+        except leancloud.errors.LeanCloudError, lce:
+            print lce
         return result_list
 
     @staticmethod
@@ -97,7 +100,7 @@ class LeancloudUtils():
 # 测试demo
 if __name__ == '__main__':
     # lcu = LeancloudUtils(settings.APP_ID, settings.APP_KEY)
-    appdict = DataObject.AppDict()
+    appdict = data_object.AppDict()
     appdict_result = LeancloudUtils.get_remote_data(appdict, 'AppDict', 2000)
     # tests output
     import sys
