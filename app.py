@@ -104,76 +104,6 @@ def handle_applist_data():
     return 'You Request Method is Not Correct!'
 
 
-@app.route('/predict', methods=['POST'])
-def predict_static_info():
-    # params JSON validate
-    # req_data = {}
-    try:
-        logger.info('[%s][predict_static_info]receive post request from %s, param data=%s' % (
-            token_config.LOG_TAG, request.remote_addr, request.data))
-        req_data = json.loads(request.data)
-    except ValueError, err_msg:
-        logger.error('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
-        # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
-        resp = make_response(json.dumps({'code': 103, 'msg': str(err_msg)}), 400)
-        return resp
-    apps = req_data.get('applist')
-    if not apps:
-        logger.error('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
-        resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
-        return resp
-    sim_dict = android_predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_nonbinary=True)
-    # transform the prob
-    # for key in sim_dict.keys():
-    #     if '-' in key:
-    #         levels = key.split('-')
-    #         first_level = levels[0]
-    #         second_level = levels[1]
-    #         if first_level in sim_dict.keys():
-    #             sim_dict[first_level][second_level] = sim_dict[key]
-    #         else:
-    #             sim_dict[first_level] = {second_level: sim_dict[key]}
-    #         del sim_dict[key]
-    logger.info('[%s][predict_static_info]%s\'s request success, sim dic =%s' % (
-        token_config.LOG_TAG, request.remote_addr, json.dumps(sim_dict)))
-    return json.dumps(sim_dict)
-
-
-@app.route('/predict_level', methods=['POST'])
-def predict_static_info_level():
-    # params JSON validate
-    # req_data = {}
-    try:
-        logger.info('[%s][predict_static_info_level]receive post request from %s, param data=%s' % (
-            token_config.LOG_TAG, request.remote_addr, request.data))
-        req_data = json.loads(request.data)
-    except ValueError, err_msg:
-        logger.error('[%s][predict_static_info]%s' % (token_config.LOG_TAG, err_msg))
-        # logger.error('[ValueError] err_msg: %s, params=%s' % (err_msg, request.data))
-        resp = make_response(json.dumps({'code': 103, 'msg': str(err_msg)}), 400)
-        return resp
-    apps = req_data.get('applist')
-    if not apps:
-        logger.error('[%s][predict_static_info]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
-        resp = make_response(json.dumps({'code': 1, 'msg': 'param error:no applist'}), 400)
-        return resp
-    sim_dict = android_predictor.staticinfo_predict(apps, is_local=False, is_degreed=True, add_nonbinary=True)
-    # transform the prob
-    for key in sim_dict.keys():
-        if '-' in key:
-            levels = key.split('-')
-            first_level = levels[0]
-            second_level = levels[1]
-            if first_level in sim_dict.keys():
-                sim_dict[first_level][second_level] = sim_dict[key]
-            else:
-                sim_dict[first_level] = {second_level: sim_dict[key]}
-            del sim_dict[key]
-    logger.info('[%s][predict_static_info]%s\'s request success, sim dic =%s' % (
-        token_config.LOG_TAG, request.remote_addr, json.dumps(sim_dict)))
-    return json.dumps(sim_dict)
-
-
 @app.route('/predict_platform', methods=['POST'])
 def predict_static_info_platform():
     try:
@@ -209,58 +139,6 @@ def predict_static_info_platform():
             '[%s][predict_static_info_platform]post parameter error! params=%s' % (token_config.LOG_TAG, request.data))
         resp = make_response(json.dumps({'code': 1, 'msg': 'key error:%s' % keyerr}), 400)
         return resp
-
-
-@app.route('/log', methods=['POST'])
-def log_userinfo():
-    try:
-        logger.info('[%s][log_userinfo]receive post request from %s, param data=%s' % (
-            token_config.LOG_TAG, request.remote_addr, request.data))
-        req_data = json.loads(request.data)
-        userId = req_data['userId']
-        timestamp = req_data['timestamp']
-        applist = req_data['applist']
-        userRawdataId = req_data['userRawdataId']
-        staticInfo = android_predictor.staticinfo_predict(applist, add_nonbinary=True)
-        userinfo_manager.push_userinfo(userId, applist, staticInfo, timestamp, userRawdataId)
-        return json.dumps({'code': 0, 'msg': 'user %s staticinfo logged,timestamp=%s' % (userId, timestamp)})
-    except MsgException, me:
-        logger.error(
-            '[%s][log_userinfo]POST log Error! detail = %s\n params=%s' % (token_config.LOG_TAG, me, request.data))
-        resp = make_response(json.dumps({'code': 1, 'msg': str(me)}), 400)
-        return resp
-    except ValueError, ve:
-        logger.error(
-            '[%s][log_userinfo]POST log ValueError! detail = %s\n params=%s' % (token_config.LOG_TAG, ve, request.data))
-        resp = make_response(json.dumps({'code': 103, 'msg': str(ve)}), 400)
-        return resp
-    except KeyError, ke:
-        logger.error('[%s][log_userinfo]POST log KeyError key=%s params=%s'
-                     % (token_config.LOG_TAG, ke, request.data))
-        resp = make_response(json.dumps({'code': 103, 'msg': 'KeyError,Key=%s' % ke}), 400)
-        return resp
-    except Exception, e:
-        logger.error('[%s][log_userinfo]POST log Unknown Error!detail = %s\n params=%s' % (
-            token_config.LOG_TAG, e, request.data))
-        resp = make_response(json.dumps({'code': 1, 'msg': str(e)}), 400)
-        return resp
-
-
-@app.route('/log/<userId>', methods=['GET'])
-@app.route('/log/<userId>/', methods=['GET'])
-def get_userinfo(userId):
-    try:
-        if userId:
-            userinfo_list = userinfo_manager.query_userinfo_list(str(userId))
-            return json.dumps({'code': 0, 'userinfo_list': userinfo_list})
-        else:
-            return json.dumps({'code': 103, 'msg': 'userId required'})
-    except MsgException, me:
-        logger.error('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
-        return json.dumps({'code': 1, 'msg': str(me)})
-    except Exception, e:
-        logger.error('[%s][log_userinfo]GET log Error! params=%s' % (token_config.LOG_TAG, request.data))
-        return json.dumps({'code': 1, 'msg': e.message})
 
 
 @app.route('/status', methods=['GET'])
